@@ -14,7 +14,7 @@ CLIENT_SECRET = '6c057c30b75744cf95a6383406f47a9d'
 @app.route("/home", methods = ['GET', 'POST'])
 def home():
     if request.method == 'GET':
-        return render_template("index.html")
+        return render_template("index.html", client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
     if request.method == 'POST':
         #return render_template("index.html", playlist=url_for_the_playlist) we could pass the url for the playlist in spotidy or maybe able to use widget
         #for now just gonna pass back the text
