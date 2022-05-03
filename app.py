@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import time
+import time, json
 
 app = Flask(__name__)
 
@@ -24,7 +24,8 @@ def home():
         if(request.form['text'] != ""):
             app.logger.error(session)
             if (session.get('token_info')):
-                text = get_playlist(session['token_info'])
+                token_info = get_token_info()
+                text = json.dumps(get_top_tracks(token_info, 1))
                 return render_template("index.html", text=text)
             else:
                 #get user's token
@@ -63,12 +64,23 @@ def get_token_info():
 
 
 #for now it gets top tracks and sends it back
-def get_top_tracks(token_info):
+def get_top_tracks(token_info, limit):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    data = sp.current_user_top_tracks(limit=50, offset=0, time_range='medium_term')
-    return data
+    data = sp.current_user_top_tracks(limit=limit, offset=0, time_range='medium_term')
+    dict = {}
+
+    for i in range(limit):
+        id = data['items'][i]["id"]
+        name = data['items'][i]["name"]
+        dict['id'] = name
+        
+    return dict
+
+
+
+
 #get top artists
-def get_top_artists(token_info)
+def get_top_artists(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     data = sp.current_user_top_artists(limit=20, offset=0, time_range='medium_term')
     return data
