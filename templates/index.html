@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Playlist</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <style>
       html, body {
@@ -12,7 +12,7 @@
       padding: 0;
       margin: 0;
       outline: none;
-      font-family: Roboto, Arial, sans-serif;
+      /*font-family: Roboto, Arial, sans-serif;*/
       font-size: 14px;
       color: #666;
       line-height: 22px;
@@ -141,9 +141,9 @@
   </head>
   <body>
     <div class="testbox">
+      <!--  -->
       <form id="mainform" action="{{ url_for('home') }}" method="post">
         <div class="item">
-          <input type="hidden" name="jsvar" id="jsvar" value="">
           <p>Enter the description of the vibe you want?</p>
           <input type="text" name="text"></input>
         </div>
@@ -157,40 +157,5 @@
         <p>{{text}}</p>
       {% endif %}
     </div>
-
-
-    <script>
-      var form = document.getElementById("mainframe")
-      var input = document.getElementById("jsvar")
-      form.addEventListener('submit', function(e){
-        var request = require('request'); // "Request" library
-
-        var client_id = ({{client_id}}); // Your client id
-        var client_secret = 'CLIENT_SECRET'; // Your secret
-
-        // your application requests authorization
-        var authOptions = {
-          url: 'https://accounts.spotify.com/api/token',
-          headers: {
-            'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-          },
-          form: {
-            grant_type: 'client_credentials'
-          },
-          json: true
-        };
-
-        request.post(authOptions, function(error, response, body) {
-          if (!error && response.statusCode === 200) {
-
-            // use the access token to access the Spotify Web API
-            var token = body.access_token;
-            input.value = token;
-            form.submit();
-          }
-        });
-      })
-      
-    </script>
   </body>
 </html>
