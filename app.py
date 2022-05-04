@@ -45,7 +45,7 @@ def pass_token():
     session['token_info'] = token
     app.logger.error(session['token_info'])
     #return render_template("index.html", text=session['token_info'])
-    return get_playlist(session['token_info'])
+    return get_top_tracks(session['token_info'])
 
 
 #returns token_info
@@ -63,11 +63,15 @@ def get_token_info():
 
 
 #for now it gets top tracks and sends it back
-def get_playlist(token_info):
+def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     data = sp.current_user_top_tracks(limit=50, offset=0, time_range='medium_term')
     return data
-
+#get top artists
+def get_top_artists(token_info)
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    data = sp.current_user_top_artists(limit=20, offset=0, time_range='medium_term')
+    return data
 
 def create_spotify_oauth():
     return SpotifyOAuth(
