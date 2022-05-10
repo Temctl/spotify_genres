@@ -3,14 +3,15 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time, json
 import text2emotion as te
+import config
 
 app = Flask(__name__)
 
 
-app.secret_key = 'henta!'
+app.secret_key = config.SECRET_KEY
 
-CLIENT_ID = 'f55bea887a4443b4b81dac5b70630ea2'
-CLIENT_SECRET = '6c057c30b75744cf95a6383406f47a9d'
+CLIENT_ID = config.CLIENT_ID
+CLIENT_SECRET = config.CLIENT_SECRET
 
 
 
@@ -30,7 +31,7 @@ def home():
                 artists = str(get_top_artists(token_info))
                 tracks = str(get_top_tracks(token_info))
                 #emotion = str(te.get_emotion(description))
-                test = get_genres()
+                test = str(get_genres())
                 return render_template("index.html", text=test)
             else:
                 #get user's token
@@ -49,8 +50,7 @@ def pass_token():
     auth = create_spotify_oauth()
     token = auth.get_access_token(code)
     session['token_info'] = token
-    #return render_template("index.html", text=session['token_info'])
-    return str(get_top_tracks(get_token_info(), 2))
+    return str(get_top_tracks(get_token_info()))
 
 
 #returns token_info
@@ -67,7 +67,6 @@ def get_token_info():
     return token_info
 
 
-#for now it gets top tracks and sends it back
 def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     data = sp.current_user_top_tracks(limit=50, offset=0, time_range='medium_term')
@@ -78,8 +77,7 @@ def get_top_tracks(token_info):
         name = i["name"]
         artists = []
         for g in i["artists"]:
-            artists.append(g["id"]) # its not appending fix it
-            app.logger.error(g["id"])
+            artists.append(g["id"]) 
         dict[id] = [name, artists] # its gonna be {"id" : "name", [artists_id]}
         
     return dict
@@ -89,7 +87,7 @@ def get_top_tracks(token_info):
 #get top artists
 def get_top_artists(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    data = sp.current_user_top_artists(limit=10, offset=0, time_range='medium_term')
+    data = sp.current_user_top_artists(limit=3, offset=0, time_range='medium_term')
     dict = {}
 
 
@@ -105,25 +103,40 @@ def get_top_artists(token_info):
 
 def get_genres():
     sp = spotipy.Spotify(auth=get_token_info()['access_token'])
-    artists = str(get_top_artists(get_token_info()))
-    tracks = str(get_top_tracks(get_token_info()))
+    artists = get_top_artists(get_token_info())
+    tracks = get_top_tracks(get_token_info())
     genres_count = {}
+    total = 0
+    genres_percentage = {}
 
-    test = {}
     for i in artists:
-        for genre in i:
+        for genre in artists[i][1]:
             if(genre in genres_count):
-                genres_count[genre] = genres_count[genre] + 1
-            else:
-                genres_count[genre] = 1
+                #app.logger.error(genre + " exists as genre")
+                genres_count[genre] = genres_count.get(genre, 0) + 1
+                total += 1
+
     for track in tracks:
-        for artist_id in track:
-            app.logger.error(track)
-            app.logger.error(artist_id)
-            test = sp.artist(artist_id)
-    return test
+        for artist_id in tracks[track][1]:
+            artist_info = sp.artist(artist_id)
+            artist_genres = artist_info['genres']
+            for i in artist_genres:
+                #app.logger.error(i + " exists as i")
+                genres_count[i] = genres_count.get(i, 0) + 1
+                total += 1
+
+    app.logger.error(total)
+    for key in genres_count:
+        persentage = (genres_count[key] / 100) * total
+        genres_percentage[key] = str(persentage) + "%" 
+
+    return genres_percentage
         
 
+
+def get_personality():
+    genres_count = get_genres()
+    return ""
 
 
 
