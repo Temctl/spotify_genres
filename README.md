@@ -1,2 +1,2 @@
-# create_playlist_test
-creating a playlist form spotify out of setnence that user provides.
+# getting genres
+Getting the most played genres of user.
