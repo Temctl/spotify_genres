@@ -18,6 +18,9 @@ CLIENT_SECRET = config.CLIENT_SECRET
 @app.route("/")
 @app.route("/home", methods = ['GET', 'POST'])
 def home():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=5)
+    
     if request.method == 'GET':
         return render_template("index.html")
     if request.method == 'POST':
