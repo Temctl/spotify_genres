@@ -1,2 +1,7 @@
 .cache
 config.py
+./venv
+venv
+**/__pycache__
+.env
+.gitignore

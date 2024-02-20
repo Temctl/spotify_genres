@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import time, json
-import text2emotion as te
+import time
+# import text2emotion as te
 import config
 
 app = Flask(__name__)
