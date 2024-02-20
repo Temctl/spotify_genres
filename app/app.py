@@ -150,4 +150,4 @@ def create_spotify_oauth():
     )
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5000)
