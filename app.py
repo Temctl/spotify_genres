@@ -1,17 +1,17 @@
+from datetime import timedelta
 from flask import Flask, render_template, request, redirect, session, url_for
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time
 # import text2emotion as te
-import config
+# import config
 
 app = Flask(__name__)
 
+app.secret_key = "test"
 
-app.secret_key = config.SECRET_KEY
-
-CLIENT_ID = config.CLIENT_ID
-CLIENT_SECRET = config.CLIENT_SECRET
+CLIENT_ID = "f55bea887a4443b4b81dac5b70630ea2"
+CLIENT_SECRET = "6c057c30b75744cf95a6383406f47a9d"
 
 
 
@@ -141,9 +141,6 @@ def get_personality():
     genres_count = get_genres()
     return ""
 
-
-
-
 def create_spotify_oauth():
     return SpotifyOAuth(
         client_id = CLIENT_ID,
@@ -151,3 +148,6 @@ def create_spotify_oauth():
         redirect_uri = url_for('pass_token', _external=True),
         scope = "user-top-read"
     )
+
+if __name__ == '__main__':
+    app.run()
