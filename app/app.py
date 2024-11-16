@@ -1,6 +1,8 @@
 from datetime import timedelta
 from flask import Flask, render_template, request, redirect, session, url_for
 import spotipy
+import google.generativeai as genai
+import os
 from spotipy.oauth2 import SpotifyOAuth
 import time
 # import text2emotion as te
@@ -9,9 +11,11 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+import requests
 
 app = Flask(__name__)
 
+genai.configure(api_key='AIzaSyAWAzGxBU6TezSlqLUvvnY80kSNaH-zi2E')
 app.secret_key = "test"
 
 CLIENT_ID = "f55bea887a4443b4b81dac5b70630ea2"
@@ -48,9 +52,10 @@ def home():
         #return render_template("index.html", playlist=url_for_the_playlist) we could pass the url for the playlist in spotidy or maybe able to use widget
         #for now just gonna pass back the text
         if(request.form['text'] != ""):
-
+            print(request)
             if (session.get('token_info')):
                 test = str(get_personality())
+                # test, _ = generate_playlist(request.form['text'])
                 return render_template("index.html", text=test)
             else:
                 #get user's token
@@ -71,6 +76,12 @@ def pass_token():
     session['token_info'] = token
     return home()
 
+
+def generate_playlist(prompt: str):
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
+    print(response.text)
+    return response.text
 
 #returns token_info
 def get_token_info():
@@ -170,3 +181,6 @@ def create_spotify_oauth():
         redirect_uri = url_for('pass_token', _external=True),
         scope = "user-top-read"
     )
+
+if __name__ == '__main__':  
+   app.run()
